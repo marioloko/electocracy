@@ -1,0 +1,19 @@
+[package]
+name = "electocracy"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+diesel = { version = "2.1", features = ["postgres", "chrono", "r2d2", "uuid"] }
+dotenvy = "0.15"
+actix-web = "4.3"
+env_logger = "0.8"
+log = "0.4"
+uuid = { version = "1.1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+openai-rust = "0.2"
+anyhow = "1.0"
