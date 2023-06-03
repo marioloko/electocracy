@@ -10,3 +10,5 @@ Example:
 {{"title": "Digitalizar ayuntamientos con el objetivo de reducir gasto público debido a gestión"}}
 
 Text: ```{text}```
+
+Do not forget the output should be in JSON.

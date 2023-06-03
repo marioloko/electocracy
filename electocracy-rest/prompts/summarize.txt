@@ -6,7 +6,12 @@ The summary should use enumeration to show the different key ideas of the text.
 The response should be a json with the following format:
 {{"summary": <summary>}}
 
+It is important to add the '\n' character after each enumeration item.
+It is important to give the response in the expected JSON format.
+
 Example:
-{{"summary": "1. Digitalización de los ayuntamientos para así reducir gasto público.\n2. La digitalización se llevaría a cabo mediante el uso de plataformas digitales que automatizasen el trabajo.\n3. Se estima un ahorro de 2.000.000 de euros anuales. 4. La digitalización podría dar lugar a perdidas masivas de puestos de trabajo."}}
+{{"summary": "1. Digitalización de los ayuntamientos para así reducir gasto público.\n2. La digitalización se llevaría a cabo mediante el uso de plataformas digitales que automatizasen el trabajo.\n3. Se estima un ahorro de 2.000.000 de euros anuales.\n4. La digitalización podría dar lugar a perdidas masivas de puestos de trabajo.\n"}}
 
 Text: ```{text}```
+
+Do not forget the output should be in JSON.

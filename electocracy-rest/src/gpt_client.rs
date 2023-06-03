@@ -28,7 +28,7 @@ macro_rules! prompt_function {
             }];
             let response_json = self.send_messages(messages).await?;
             serde_json::from_str::<$ret_type>(&response_json)
-                .context("Cannot deserialize the response JSON")
+                .with_context(|| format!("Cannot deserialize the response JSON: {response_json}"))
         }
     };
 }
