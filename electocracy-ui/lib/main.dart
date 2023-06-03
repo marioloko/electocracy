@@ -1,4 +1,4 @@
-import 'package:electocracy/app/views/poll_list_view.dart';
+import 'package:electocracy/app/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const PollsListView(),
+      onGenerateRoute: Routes.generateRoute,
+      initialRoute: Routes.polls,
     );
   }
 }

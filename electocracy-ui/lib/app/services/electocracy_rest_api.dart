@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:electocracy/app/constants/language.dart';
 import 'package:electocracy/app/models/content_request.dart';
+import 'package:electocracy/app/models/create_poll_request.dart';
 import 'package:electocracy/app/models/poll.dart';
 import 'package:electocracy/app/models/summary.dart';
 import 'package:electocracy/app/models/title.dart';
@@ -13,7 +15,7 @@ class ElectocracyRestApi {
     final response =
         await http.get(Uri.parse('http://$_electocracyRestApiAddress/poll'));
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
+      List jsonResponse = json.decode(utf8.decode(response.bodyBytes));
       return jsonResponse.map((poll) => Poll.fromJson(poll)).toList();
     } else {
       throw Exception('Failed to load polls');
@@ -21,28 +23,65 @@ class ElectocracyRestApi {
   }
 
   static Future<Title> generateTitle(String content) async {
-    final contentRequest = ContentRequest(content: content);
+    final body = jsonEncode(ContentRequest(content: content).toJson);
+
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
     final response = await http.post(
         Uri.parse('http://$_electocracyRestApiAddress/generate-title'),
-        body: json.encode(contentRequest.toJson));
+        body: body,
+        headers: headers);
     if (response.statusCode == 200) {
-      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      Map<String, dynamic> jsonResponse =
+          json.decode(utf8.decode(response.bodyBytes));
       return Title.fromJson(jsonResponse);
     } else {
-      throw Exception('Failed to generate title for poll');
+      throw Exception(Language.errorGenerateTitle);
     }
   }
 
   static Future<Summary> summarize(String content) async {
-    final contentRequest = ContentRequest(content: content);
+    final body = jsonEncode(ContentRequest(content: content).toJson);
+
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
     final response = await http.post(
         Uri.parse('http://$_electocracyRestApiAddress/summarize'),
-        body: json.encode(contentRequest.toJson));
+        body: body,
+        headers: headers);
     if (response.statusCode == 200) {
-      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      Map<String, dynamic> jsonResponse =
+          json.decode(utf8.decode(response.bodyBytes));
       return Summary.fromJson(jsonResponse);
     } else {
-      throw Exception('Failed to generate summary for poll');
+      throw Exception(Language.errorSummarize);
+    }
+  }
+
+  static Future<Poll> createPoll(
+      String title, String summary, String content) async {
+    final body = jsonEncode(
+        CreatePollRequest(title: title, summary: summary, content: content)
+            .toJson);
+
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
+    final response = await http.post(
+        Uri.parse('http://$_electocracyRestApiAddress/poll'),
+        body: body,
+        headers: headers);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse =
+          json.decode(utf8.decode(response.bodyBytes));
+      return Poll.fromJson(jsonResponse);
+    } else {
+      throw Exception(Language.errorCreatePoll);
     }
   }
 }

@@ -1,3 +1,7 @@
+class TitleFields {
+  static const String title = "title";
+}
+
 class Title {
   final String title;
 
@@ -7,7 +11,7 @@ class Title {
 
   factory Title.fromJson(Map<String, dynamic> json) {
     return Title(
-      title: json['title'],
+      title: json[TitleFields.title],
     );
   }
 }

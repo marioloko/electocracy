@@ -1,3 +1,7 @@
+class SummaryFields {
+  static const String summary = "summary";
+}
+
 class Summary {
   final String summary;
 
@@ -7,7 +11,7 @@ class Summary {
 
   factory Summary.fromJson(Map<String, dynamic> json) {
     return Summary(
-      summary: json['summary'],
+      summary: json[SummaryFields.summary],
     );
   }
 }

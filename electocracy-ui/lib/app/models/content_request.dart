@@ -1,3 +1,7 @@
+class ContentRequestFields {
+  static const String content = "content";
+}
+
 class ContentRequest {
   final String content;
 
@@ -6,6 +10,6 @@ class ContentRequest {
   });
 
   Map<String, dynamic> get toJson => {
-        "content": content,
+        ContentRequestFields.content: content,
       };
 }

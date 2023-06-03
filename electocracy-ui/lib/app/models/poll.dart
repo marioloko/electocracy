@@ -1,3 +1,10 @@
+class PollFields {
+  static const String title = "title";
+  static const String summary = "summary";
+  static const String content = "content";
+  static const String creationDate = "creation_date";
+}
+
 class Poll {
   final String title;
   final String summary;
@@ -13,10 +20,10 @@ class Poll {
 
   factory Poll.fromJson(Map<String, dynamic> json) {
     return Poll(
-      title: json['title'],
-      summary: json['summary'],
-      content: json['content'],
-      creationDate: DateTime.parse(json['creation_date']),
+      title: json[PollFields.title],
+      summary: json[PollFields.summary],
+      content: json[PollFields.content],
+      creationDate: DateTime.parse(json[PollFields.creationDate]),
     );
   }
 }

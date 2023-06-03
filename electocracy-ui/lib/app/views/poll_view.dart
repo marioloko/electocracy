@@ -1,5 +1,12 @@
+import 'package:electocracy/app/constants/language.dart';
 import 'package:electocracy/app/models/poll.dart';
 import 'package:flutter/material.dart';
+
+class PollViewArguments {
+  final Poll poll;
+
+  const PollViewArguments({required this.poll});
+}
 
 class PollView extends StatelessWidget {
   final Poll poll;
@@ -9,36 +16,37 @@ class PollView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Votación'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text(
-              'Puntos Clave',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10.0),
-            Text(poll.summary),
-            const SizedBox(height: 20.0),
-            const Text(
-              'Contenido',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10.0),
-            Text(poll.content),
-          ],
+        appBar: AppBar(
+          title: const Text(Language.poll),
         ),
-      ),
-    );
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Text(
+                  Language.keyIdeas,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                Text(poll.summary),
+                const SizedBox(height: 20.0),
+                const Text(
+                  Language.content,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                Text(poll.content),
+              ],
+            ),
+          ),
+        ));
   }
 }
