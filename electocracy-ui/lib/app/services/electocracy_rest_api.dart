@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:electocracy/app/constants/language.dart';
+import 'package:electocracy/app/models/comment.dart';
 import 'package:electocracy/app/models/content_request.dart';
+import 'package:electocracy/app/models/create_comment_request.dart';
 import 'package:electocracy/app/models/create_poll_request.dart';
 import 'package:electocracy/app/models/poll.dart';
 import 'package:electocracy/app/models/summary.dart';
@@ -17,6 +19,17 @@ class ElectocracyRestApi {
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(utf8.decode(response.bodyBytes));
       return jsonResponse.map((poll) => Poll.fromJson(poll)).toList();
+    } else {
+      throw Exception('Failed to load polls');
+    }
+  }
+
+  static Future<List<Comment>> listComments(String pollId) async {
+    final response = await http.get(
+        Uri.parse('http://$_electocracyRestApiAddress/poll/$pollId/comment'));
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+      return jsonResponse.map((poll) => Comment.fromJson(poll)).toList();
     } else {
       throw Exception('Failed to load polls');
     }
@@ -82,6 +95,28 @@ class ElectocracyRestApi {
       return Poll.fromJson(jsonResponse);
     } else {
       throw Exception(Language.errorCreatePoll);
+    }
+  }
+
+  static Future<Comment> createComment(String pollId, String message,
+      {int? parentId}) async {
+    final body = jsonEncode(
+        CreateCommentRequest(parentId: parentId, message: message).toJson);
+
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
+    final response = await http.post(
+        Uri.parse('http://$_electocracyRestApiAddress/poll/$pollId/comment'),
+        body: body,
+        headers: headers);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse =
+          json.decode(utf8.decode(response.bodyBytes));
+      return Comment.fromJson(jsonResponse);
+    } else {
+      throw Exception("Error creating new comment");
     }
   }
 }

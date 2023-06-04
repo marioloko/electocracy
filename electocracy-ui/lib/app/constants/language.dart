@@ -15,4 +15,11 @@ class Language {
   static const String errorGenerateTitle =
       "Error generando titulo de la votación";
   static const String errorPollList = "Error listando votaciones";
+  static const String comments = "Comentarios";
+  static const String votePoll = "Votar";
+  static const String pollDescription = "Descripción";
+  static const String errorCommentList = "Error listando comentarios";
+  static const String writeCommentLabel =
+      "Deje una opinión educada sobre esta votación...";
+  static const String errorCreateComment = "Hubo un error al crear el mensaje";
 }

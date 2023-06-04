@@ -21,7 +21,7 @@ class _PollListViewState extends State<PollListView> {
     _pollList = ElectocracyRestApi.listPolls();
   }
 
-  Future<void> _refreshPosts() async {
+  Future<void> _refreshPolls() async {
     setState(() {
       _pollList = ElectocracyRestApi.listPolls();
     });
@@ -38,7 +38,7 @@ class _PollListViewState extends State<PollListView> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return RefreshIndicator(
-                  onRefresh: _refreshPosts,
+                  onRefresh: _refreshPolls,
                   child: ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
@@ -58,7 +58,7 @@ class _PollListViewState extends State<PollListView> {
 class _PollTile extends StatelessWidget {
   final Poll poll;
 
-  const _PollTile({super.key, required this.poll});
+  const _PollTile({required this.poll});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class _PollTile extends StatelessWidget {
 }
 
 class _CreatePollButton extends StatelessWidget {
-  const _CreatePollButton({super.key});
+  const _CreatePollButton();
 
   @override
   Widget build(BuildContext context) {
