@@ -1,13 +1,14 @@
 use actix_web::{error, web, Result};
 use anyhow::anyhow;
-use diesel::{QueryDsl, RunQueryDsl, SelectableHelper};
+use diesel::{QueryDsl, RunQueryDsl, SelectableHelper, ExpressionMethods};
 use uuid::Uuid;
 
 use crate::models::backend as back;
 use crate::models::frontend as front;
 use crate::models::gpt::{GptSummary, GptTitle};
-use crate::schema::polls;
+use crate::schema::{comments, polls};
 use crate::state::AppState;
+use crate::helpers::filter_eq_nullable;
 
 pub async fn summarize(
     app_state: web::Data<AppState>,
@@ -85,12 +86,8 @@ pub async fn create_poll(
 
 pub async fn list_polls(
     app_state: web::Data<AppState>,
-    query: web::Query<front::ListPollsQuery>,
 ) -> Result<web::Json<Vec<back::Poll>>> {
-    use crate::schema::polls::dsl::*;
-
-    let query = query.into_inner();
-    let limit = query.limit.unwrap_or(front::DEFAULT_LIST_POLL_QUERY_LIMIT);
+    use crate::schema::polls::dsl;
 
     let results = web::block(move || {
         let mut conn = app_state.get_connection().map_err(|err| {
@@ -98,9 +95,9 @@ pub async fn list_polls(
             err
         })?;
 
-        polls
-            .limit(limit)
+        dsl::polls
             .select(back::Poll::as_returning())
+            .order_by(dsl::creation_date.desc())
             .load(&mut conn)
             .map_err(|err| {
                 log::error!("Error listing polls from database: {err}");
@@ -136,4 +133,76 @@ pub async fn get_poll(
     .map_err(|err| error::ErrorInternalServerError(err))?;
 
     Ok(web::Json(poll))
+}
+
+pub async fn create_comment(
+    app_state: web::Data<AppState>,
+    comment: web::Json<front::CreateCommentRequest>,
+    poll_id: web::Path<Uuid>,
+) -> Result<web::Json<back::Comment>> {
+    let poll_id = poll_id.into_inner();
+
+    let comment = comment.into_inner();
+    let parent_id = comment.parent_id;
+    let message = comment.message;
+
+    let new_comment = back::InsertComment {
+        poll_id,
+        parent_id,
+        message,
+    };
+
+    let comment = web::block(move || {
+        let mut conn = app_state.get_connection().map_err(|err| {
+            log::error!("Error getting connection to create comment: {err}");
+            err
+        })?;
+
+        diesel::insert_into(comments::table)
+            .values(&[new_comment])
+            .get_result::<back::Comment>(&mut conn)
+            .map_err(|err| {
+                log::error!("Error inserting comment into database: {err}");
+                anyhow!("Error inserting comment into database: {err}")
+            })
+    })
+    .await?
+    .map_err(|err| error::ErrorInternalServerError(err))?;
+
+    Ok(web::Json(comment))
+}
+
+pub async fn list_comments(
+    app_state: web::Data<AppState>,
+    poll_id: web::Path<Uuid>,
+    query: web::Query<front::ListCommentsQuery>,
+) -> Result<web::Json<Vec<back::Comment>>> {
+    use crate::schema::comments::dsl;
+
+    let poll_id = poll_id.into_inner();
+
+    let query = query.into_inner();
+    let parent_id = query.parent_id;
+
+    let results = web::block(move || {
+        let mut conn = app_state.get_connection().map_err(|err| {
+            log::error!("Error getting connection to list polls: {err}");
+            err
+        })?;
+
+        let query = dsl::comments
+            .filter(dsl::poll_id.eq(poll_id));
+
+        filter_eq_nullable!(query, dsl::parent_id, parent_id)
+            .select(back::Comment::as_returning())
+            .load(&mut conn)
+            .map_err(|err| {
+                log::error!("Error listing polls from database: {err}");
+                anyhow!("Error listing polls from database: {err}")
+            })
+    })
+    .await?
+    .map_err(|err| error::ErrorInternalServerError(err))?;
+
+    Ok(web::Json(results))
 }

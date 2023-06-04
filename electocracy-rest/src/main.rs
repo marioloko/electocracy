@@ -25,6 +25,8 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .app_data(web::Data::new(app_state.clone()))
             .route("/poll/{id}", web::get().to(svc::get_poll))
+            .route("/poll/{id}/comment", web::post().to(svc::create_comment))
+            .route("/poll/{id}/comment", web::get().to(svc::list_comments))
             .route("/poll", web::get().to(svc::list_polls))
             .route("/poll", web::post().to(svc::create_poll))
             .route("/summarize", web::post().to(svc::summarize))

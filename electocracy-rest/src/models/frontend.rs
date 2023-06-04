@@ -1,7 +1,5 @@
 use serde::Deserialize;
 
-pub const DEFAULT_LIST_POLL_QUERY_LIMIT: i64 = 10;
-
 #[derive(Deserialize)]
 pub struct CreatePollRequest {
     pub title: String,
@@ -20,6 +18,12 @@ pub struct TitleRequest {
 }
 
 #[derive(Deserialize)]
-pub struct ListPollsQuery {
-    pub limit: Option<i64>,
+pub struct CreateCommentRequest {
+    pub parent_id: Option<i64>,
+    pub message: String,
+}
+
+#[derive(Deserialize)]
+pub struct ListCommentsQuery {
+    pub parent_id: Option<i64>,
 }
